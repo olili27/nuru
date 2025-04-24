@@ -1,0 +1,50 @@
+name : Python Test
+on: 
+  push:
+    branches: [master]
+  pull_request:
+    branches: [origin master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout code
+      uses: actions/checkout@v4
+
+    - name: set up python 3.12
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: install dependencies
+      run: 
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run:
+        pytest --maxfail=1 --disable-warnings -q
+
+  lint:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run linters
+        run: |
+          flake8 . --max-line-length=120 --ignore=E501,E203,W503,F401,F403,F405,E722,E731,E741,E722,E1101,W504,W605,W601,W602,W604,W606,W607,W601,W602,W603,W604,W605,W606,W607,E501,E203,E231,E701,E702,E703,E704,E711,E712,E713,E714,E721,E722,E731,E741,E722,E1101,W504,W605,W601,W602,W604,W606,W607,W601,W602,W603,W604,W605,W606,W607 --exclude=.git,venv,build,dist,*.egg-info,*.egg,*.whl,*.pyc,*.pyo,*.pyd,*.db,*.sqlite3,*.log,*.csv,*.tsv,*.json,*.xml,*.html,*.css,*.js,*.jsx,*.tsx,*.scss,*.sass,*.less,*.stylus,.DS_Store,.idea,.vscode,.history,.pytest_cache,.mypy_cache,.tox
